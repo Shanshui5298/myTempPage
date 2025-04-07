@@ -37,81 +37,158 @@
 
         .dashboard {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
         }
 
         .card {
             background: white;
-            border-radius: 10px;
-            padding: 25px;
+            border-radius: 8px;
+            padding: 20px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
             cursor: pointer;
             text-align: center;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
 
         .card i {
-            font-size: 2em;
+            font-size: 2.8em;
             color: #1a237e;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .card h2 {
             color: #333;
-            font-size: 1.2em;
-            margin-bottom: 10px;
+            font-size: 1em;
+            margin: 0;
+            line-height: 1.3;
         }
 
-        .card p {
-            color: #666;
-            font-size: 0.9em;
-            line-height: 1.5;
+        @media (max-width: 992px) {
+            .dashboard {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
         }
 
-        /* 响应式设计 */
         @media (max-width: 768px) {
             .dashboard {
                 grid-template-columns: 1fr;
+            }
+            .card {
+                padding: 15px;
+                min-height: 120px;
+            }
+            .card i {
+                font-size: 2.2em;
             }
         }
     </style>
 </head>
 <body>
+    
+    <style>
+        /* 新增退出按钮样式 */
+        .logout-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+    
+        .logout-btn {
+            background: #1a237e;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+    
+        .logout-btn:hover {
+            background: #0d47a1;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+        }
+    
+        @media (max-width: 768px) {
+            .logout-container {
+                top: 10px;
+                right: 10px;
+            }
+            .logout-btn {
+                padding: 6px 12px;
+                font-size: 0.8em;
+            }
+        }
+    </style>
+    
+    <div class="logout-container">
+        <button class="logout-btn" onclick="handleLogout()">点我退出当前WPS账号</button>
+    </div>
+    
+    <script>
+        // 在现有script标签内添加
+        function handleLogout() {
+            // 清除所有cookie
+            document.cookie.split(";").forEach(cookie => {
+                const eqPos = cookie.indexOf("=");
+                const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+            });
+    
+            // 强制刷新页面
+            setTimeout(() => {
+                window.location.reload(true);
+            }, 500);
+        }
+    </script>
+
     <div class="container">
         <div class="header">
             <h1>四合胜利建华片区征收项目指挥部<br>数字化工作平台</h1>
-            <p>请选择需要操作的功能模块</p>
         </div>
         
         <div class="dashboard" id="app">
-            <!-- 按钮将通过JavaScript动态生成 -->
+            <!-- 按钮动态生成 -->
         </div>
     </div>
 
     <script>
-        // 按钮配置数据（请根据实际表格内容修改）
         const linkConfig = [
-            { name: "产权调换同意率看板", icon: "fa-chart-line", link: "https://www.kdocs.cn/wo/sl/v1HuYiF" },
-            { name: "社情民意摸排信息填报", icon: "fa-users", link: "https://www.kdocs.cn/wo/sl/v12yUnYd" },
-            { name: "各群众组数据详情", icon: "fa-solid fa-pen-to-square", link: "https://www.kdocs.cn/wo/sl/v130QwFh" },
-            { name: "各群众组数据统计", icon: "fa-tasks", link: "https://www.kdocs.cn/wo/sl/v12RxOxg" },
-            { name: "各片区数据统计", icon: "fa-solid fa-font-awesome", link: "https://www.kdocs.cn/wo/sl/v13Xh7s8" },
-            { name: "居民分组名单", icon: "fa-user-tie", link: "https://www.kdocs.cn/wo/sl/v12tJBZA" }
+            // 原始功能按钮
+            { name: "补偿方式选择意向看板", icon: "fa-chart-line", link: "https://www.kdocs.cn/wo/sl/v1fHtSr" },
+            { name: "补偿方式摸底分析", icon: "fa-solid fa-magnifying-glass", link: "https://www.kdocs.cn/wo/sl/v11Fd1zI" },
+            { name: "补偿方式摸底分析统计", icon: "fa-chart-line", link: "https://www.kdocs.cn/wo/sl/v13Z26lY" },
+            { name: "需要货币补偿情况统计", icon: "fa-chart-line", link: "https://www.kdocs.cn/wo/sl/v11fG8t" },
+            { name: "需要货币补偿原因统计", icon: "fa-chart-line", link: "https://www.kdocs.cn/wo/sl/v14RVl11" },
+            { name: "居民分组名单", icon: "fa-user-tie", link: "https://www.kdocs.cn/wo/sl/v12tJBZA" },
+            // 新增功能待指定按钮
+            ...Array(6).fill().map(() => ({
+                name: "功能待指定",
+                icon: "fa-question-circle",
+                link: "#"
+            }))
         ];
 
-        // 动态生成按钮
         function createDashboard() {
             const dashboard = document.getElementById('app');
             linkConfig.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'card';
-                card.onclick = () => window.open(item.link, '_blank');
+                card.onclick = () => item.link !== '#' && window.open(item.link, '_blank');
                 
                 card.innerHTML = `
                     <i class="fas ${item.icon}"></i>
@@ -121,7 +198,6 @@
             });
         }
 
-        // 初始化
         window.onload = createDashboard;
     </script>
 </body>
