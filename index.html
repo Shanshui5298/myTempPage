@@ -60,7 +60,20 @@
             flex-shrink: 0;
         }
 
-        /* 无效链接按钮样式 */
+        /* 全屏按钮样式 */
+        .fullscreen-btn {
+            position: absolute;
+            top: 50px;
+            right: 50px;
+            background: #1a237e;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
         .card.invalid {
             opacity: 0.6;
             cursor: not-allowed;
@@ -139,6 +152,7 @@
         <div class="dashboard" id="app"></div>
 
         <div class="content-container">
+            <button class="fullscreen-btn" onclick="toggleFullscreen()">全屏显示</button>
             <div class="loading-mask">加载中...</div>
             <iframe 
                 id="contentFrame" 
@@ -160,12 +174,35 @@
             { name: "功能待指定", icon: "fa-cog", link: "#" }
         ];
 
-        // 链接有效性验证
+        // 全屏功能实现
+        function toggleFullscreen() {
+            const elem = document.querySelector('.content-container');
+            if (!document.fullscreenElement) {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.mozRequestFullScreen) {
+                    elem.mozRequestFullScreen();
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) {
+                    elem.msRequestFullscreen();
+                }
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // 监听全屏状态变化
+        document.addEventListener('fullscreenchange', () => {
+            const btn = document.querySelector('.fullscreen-btn');
+            btn.textContent = document.fullscreenElement ? '退出全屏' : '全屏显示';
+        });
+
+        // 原有功能保持不变
         function isValidLink(url) {
             return url && url !== "#" && !url.startsWith("javascript:");
         }
 
-        // 创建按钮面板
         function createDashboard() {
             const dashboard = document.getElementById('app');
             dashboard.innerHTML = linkConfig.map(item => `
@@ -178,7 +215,6 @@
             `).join('');
         }
 
-        // 增强内容加载功能
         function loadContent(url) {
             if (!isValidLink(url)) return;
 
@@ -201,7 +237,6 @@
             }
         }
 
-        // 初始化加载第一个有效链接
         window.addEventListener('DOMContentLoaded', () => {
             createDashboard();
             const firstValid = linkConfig.find(item => isValidLink(item.link));
