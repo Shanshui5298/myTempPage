@@ -95,67 +95,6 @@
     </style>
 </head>
 <body>
-    
-    <style>
-        /* 新增退出按钮样式 */
-        .logout-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-        }
-    
-        .logout-btn {
-            background: #1a237e;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-            font-size: 0.9em;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-        }
-    
-        .logout-btn:hover {
-            background: #0d47a1;
-            transform: translateY(-1px);
-            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
-        }
-    
-        @media (max-width: 768px) {
-            .logout-container {
-                top: 10px;
-                right: 10px;
-            }
-            .logout-btn {
-                padding: 6px 12px;
-                font-size: 0.8em;
-            }
-        }
-    </style>
-    
-    <div class="logout-container">
-        <button class="logout-btn" onclick="handleLogout()">点我退出当前WPS账号</button>
-    </div>
-    
-    <script>
-        // 在现有script标签内添加
-        function handleLogout() {
-            // 清除所有cookie
-            document.cookie.split(";").forEach(cookie => {
-                const eqPos = cookie.indexOf("=");
-                const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-                document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
-            });
-    
-            // 强制刷新页面
-            setTimeout(() => {
-                window.location.reload(true);
-            }, 500);
-        }
-    </script>
-
     <div class="container">
         <div class="header">
             <h1>四合胜利建华片区征收项目指挥部<br>数字化工作平台</h1>
