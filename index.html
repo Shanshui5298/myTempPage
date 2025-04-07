@@ -19,9 +19,9 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 100%;
             margin: 0 auto;
-            padding: 30px 20px;
+            padding: 30px 40px;
         }
 
         .header {
@@ -31,65 +31,101 @@
 
         .header h1 {
             color: #1a237e;
-            font-size: 2.5em;
+            font-size: 2em;
             margin-bottom: 10px;
+            line-height: 1.3;
+            padding: 0 20px;
         }
 
         .dashboard {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
+            grid-template-columns: repeat(8, minmax(180px, 1fr));
+            gap: 16px;
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 15px;
         }
 
         .card {
             background: white;
             border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 0 25px;
+            height: 48px;
+            display: flex;
+            align-items: center;
             transition: all 0.3s ease;
             cursor: pointer;
-            text-align: center;
-            min-height: 150px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            min-width: 180px;
+            flex-shrink: 0;
         }
 
-        .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        /* 无效链接按钮样式 */
+        .card.invalid {
+            opacity: 0.6;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .card.invalid:hover {
+            transform: none;
         }
 
         .card i {
-            font-size: 2.8em;
+            margin-right: 15px;
+            font-size: 18px;
             color: #1a237e;
-            margin-bottom: 12px;
+            flex-shrink: 0;
         }
 
         .card h2 {
+            font-size: 0.95em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             color: #333;
-            font-size: 1em;
             margin: 0;
-            line-height: 1.3;
+            min-width: 0;
         }
 
-        @media (max-width: 992px) {
-            .dashboard {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-            }
+        .content-container {
+            width: 100%;
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: white;
+            height: 75vh;
+            position: relative;
+        }
+
+        #contentFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .loading-mask {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #666;
+            font-size: 1.2em;
+            display: none;
         }
 
         @media (max-width: 768px) {
-            .dashboard {
-                grid-template-columns: 1fr;
+            .container {
+                padding: 30px 20px;
             }
             .card {
-                padding: 15px;
-                min-height: 120px;
+                min-width: 160px;
+                height: 44px;
+                padding: 0 20px;
             }
-            .card i {
-                font-size: 2.2em;
+            .content-container {
+                height: 55vh;
             }
         }
     </style>
@@ -97,47 +133,80 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>四合胜利建华片区征收项目指挥部<br>数字化工作平台</h1>
+            <h1>四合胜利建华片区征收项目指挥部数字化工作平台</h1>
         </div>
         
-        <div class="dashboard" id="app">
-            <!-- 按钮动态生成 -->
+        <div class="dashboard" id="app"></div>
+
+        <div class="content-container">
+            <div class="loading-mask">加载中...</div>
+            <iframe 
+                id="contentFrame" 
+                sandbox="allow-scripts allow-same-origin allow-forms"
+                loading="lazy"
+            ></iframe>
         </div>
     </div>
 
     <script>
         const linkConfig = [
-            // 原始功能按钮
-            { name: "补偿方式选择意向看板", icon: "fa-chart-line", link: "https://www.kdocs.cn/wo/sl/v1fHtSr" },
-            { name: "补偿方式摸底分析", icon: "fa-solid fa-magnifying-glass", link: "https://www.kdocs.cn/wo/sl/v11Fd1zI" },
-            { name: "补偿方式摸底分析统计", icon: "fa-chart-line", link: "https://www.kdocs.cn/wo/sl/v13Z26lY" },
-            { name: "需要货币补偿情况统计", icon: "fa-chart-line", link: "https://www.kdocs.cn/wo/sl/v11fG8t" },
-            { name: "需要货币补偿原因统计", icon: "fa-chart-line", link: "https://www.kdocs.cn/wo/sl/v14RVl11" },
+            { name: "产权调换数据看板", icon: "fa-chart-line", link: "https://www.kdocs.cn/wo/sl/v1fHtSr" },
+            { name: "社情民意信息", icon: "fa-users", link: "https://www.kdocs.cn/wo/sl/v12yUnYd" },
+            { name: "各组户情数据", icon: "fa-pen-to-square", link: "https://www.kdocs.cn/wo/sl/v130QwFh" },
+            { name: "各组居民意向", icon: "fa-tasks", link: "https://www.kdocs.cn/wo/sl/v13Z26lY" },
+            { name: "各片区居民意向", icon: "fa-map", link: "https://www.kdocs.cn/wo/sl/v13Xh7s8" },
             { name: "居民分组名单", icon: "fa-user-tie", link: "https://www.kdocs.cn/wo/sl/v12tJBZA" },
-            // 新增功能待指定按钮
-            ...Array(6).fill().map(() => ({
-                name: "功能待指定",
-                icon: "fa-question-circle",
-                link: "#"
-            }))
+            { name: "功能待指定", icon: "fa-coins", link: "#" },
+            { name: "功能待指定", icon: "fa-cog", link: "#" }
         ];
 
-        function createDashboard() {
-            const dashboard = document.getElementById('app');
-            linkConfig.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.onclick = () => item.link !== '#' && window.open(item.link, '_blank');
-                
-                card.innerHTML = `
-                    <i class="fas ${item.icon}"></i>
-                    <h2>${item.name}</h2>
-                `;
-                dashboard.appendChild(card);
-            });
+        // 链接有效性验证
+        function isValidLink(url) {
+            return url && url !== "#" && !url.startsWith("javascript:");
         }
 
-        window.onload = createDashboard;
+        // 创建按钮面板
+        function createDashboard() {
+            const dashboard = document.getElementById('app');
+            dashboard.innerHTML = linkConfig.map(item => `
+                <div class="card ${isValidLink(item.link) ? '' : 'invalid'}" 
+                     onclick="${isValidLink(item.link) ? `loadContent('${item.link}')` : 'void(0)'}"
+                     title="${isValidLink(item.link) ? item.name : '功能暂未开放'}">
+                    <i class="fas ${item.icon}"></i>
+                    <h2>${item.name}</h2>
+                </div>
+            `).join('');
+        }
+
+        // 增强内容加载功能
+        function loadContent(url) {
+            if (!isValidLink(url)) return;
+
+            const frame = document.getElementById('contentFrame');
+            const loader = document.querySelector('.loading-mask');
+            
+            loader.style.display = 'block';
+            frame.style.opacity = '0.5';
+
+            frame.onload = frame.onerror = () => {
+                loader.style.display = 'none';
+                frame.style.opacity = '1';
+            };
+
+            try {
+                frame.src = url;
+            } catch(e) {
+                console.error('框架加载失败:', e);
+                loader.textContent = '内容加载失败';
+            }
+        }
+
+        // 初始化加载第一个有效链接
+        window.addEventListener('DOMContentLoaded', () => {
+            createDashboard();
+            const firstValid = linkConfig.find(item => isValidLink(item.link));
+            if (firstValid) loadContent(firstValid.link);
+        });
     </script>
 </body>
 </html>
