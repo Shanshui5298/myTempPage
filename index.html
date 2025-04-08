@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>项目指挥部数字化工作平台</title>
+    <title>项目指挥部信息化平台</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -60,7 +61,6 @@
             flex-shrink: 0;
         }
 
-        /* 全屏按钮样式 */
         .fullscreen-btn {
             position: absolute;
             top: 5px;
@@ -74,13 +74,25 @@
             z-index: 1000;
         }
 
-        /* 飞字公告栏样式 */
+        .login-btn {
+            position: absolute;
+            top: 5px;
+            left: 400px;
+            background: #0e9753;
+            color: white;
+            border: none;
+            padding: 6px 38px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
         .announcement-bar {
             position: absolute;
             top: 5px;
             left: 5px;
-            width: 500px;
-            height: 30px;
+            width: 385px;
+            height: 28px;
             background: linear-gradient(90deg, #5b66e4, #0e9753);
             border: none;
             z-index: 999;
@@ -100,12 +112,8 @@
         }
 
         @keyframes scrollText {
-            0% {
-                transform: translateX(0);
-            }
-            100% {
-                transform: translateX(-100%);
-            }
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
         }
 
         .card.invalid {
@@ -114,9 +122,7 @@
             box-shadow: none;
         }
 
-        .card.invalid:hover {
-            transform: none;
-        }
+        .card.invalid:hover { transform: none; }
 
         .card i {
             margin-right: 15px;
@@ -163,19 +169,20 @@
         }
 
         @media (max-width: 768px) {
-            .container {
-                padding: 30px 20px;
-            }
+            .container { padding: 30px 20px; }
             .card {
                 min-width: 160px;
                 height: 44px;
                 padding: 0 20px;
             }
-            .content-container {
-                height: 55vh;
-            }
+            .content-container { height: 55vh; }
             .announcement-bar {
                 width: 300px;
+                font-size: 12px;
+            }
+            .login-btn {
+                left: 315px;
+                padding: 6px 28px;
                 font-size: 12px;
             }
         }
@@ -190,24 +197,46 @@
         <div class="dashboard" id="app"></div>
 
         <div class="content-container">
+            <button class="login-btn" onclick="preloadAndLoad('https://account.wps.cn/')">
+                登录WPS账号
+            </button>
+            
             <button class="fullscreen-btn" onclick="toggleFullscreen()">全屏显示</button>
             <div class="announcement-bar">
                 <div class="announcement-content">
-                    如有任何需求，请随时联系管理员。联系电话：18633705298
+                    请务必先登录您的WPS账号，有问题可随时联系管理员。联系电话：18633705298
                 </div>
             </div>
             <div class="loading-mask">加载中...</div>
             <iframe 
                 id="contentFrame" 
-                sandbox="allow-scripts allow-same-origin allow-forms"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
                 loading="lazy"
             ></iframe>
         </div>
     </div>
 
     <script>
+        // 静默访问功能
+        function silentPreload() {
+            try {
+                fetch('https://www.kdocs.cn/', {
+                    method: 'HEAD',
+                    mode: 'no-cors',
+                    credentials: 'include'
+                }).catch(() => {});
+                new Image().src = 'https://www.kdocs.cn/?t=' + Date.now();
+            } catch(e) {}
+        }
+
+        // 统一处理方法
+        function preloadAndLoad(url) {
+            silentPreload();
+            loadContent(url);
+        }
+
         const linkConfig = [
-            { name: "产权调换数据看板", icon: "fa-chart-line", link: "https://www.kdocs.cn/wo/sl/v1fHtSr" },
+        { name: "产权调换数据看板", icon: "fa-chart-line", link: "https://www.kdocs.cn/wo/sl/v1fHtSr" },
             { name: "社情民意信息", icon: "fa-users", link: "https://www.kdocs.cn/wo/sl/v12yUnYd" },
             { name: "各组户情数据", icon: "fa-pen-to-square", link: "https://www.kdocs.cn/wo/sl/v1eXV63" },
             { name: "各组居民意向", icon: "fa-tasks", link: "https://www.kdocs.cn/wo/sl/v13Z26lY" },
@@ -217,31 +246,20 @@
             { name: "功能待指定", icon: "fa-cog", link: "#" }
         ];
 
-        // 全屏功能实现
         function toggleFullscreen() {
             const elem = document.querySelector('.content-container');
             if (!document.fullscreenElement) {
-                if (elem.requestFullscreen) {
-                    elem.requestFullscreen();
-                } else if (elem.mozRequestFullScreen) {
-                    elem.mozRequestFullScreen();
-                } else if (elem.webkitRequestFullscreen) {
-                    elem.webkitRequestFullscreen();
-                } else if (elem.msRequestFullscreen) {
-                    elem.msRequestFullscreen();
-                }
+                elem.requestFullscreen?.();
             } else {
-                document.exitFullscreen();
+                document.exitFullscreen?.();
             }
         }
 
-        // 监听全屏状态变化
         document.addEventListener('fullscreenchange', () => {
             const btn = document.querySelector('.fullscreen-btn');
             btn.textContent = document.fullscreenElement ? '退出全屏' : '全屏显示';
         });
 
-        // 原有功能保持不变
         function isValidLink(url) {
             return url && url !== "#" && !url.startsWith("javascript:");
         }
@@ -250,7 +268,7 @@
             const dashboard = document.getElementById('app');
             dashboard.innerHTML = linkConfig.map(item => `
                 <div class="card ${isValidLink(item.link) ? '' : 'invalid'}" 
-                     onclick="${isValidLink(item.link) ? `loadContent('${item.link}')` : 'void(0)'}"
+                     onclick="${isValidLink(item.link) ? `preloadAndLoad('${item.link}')` : 'void(0)'}"
                      title="${isValidLink(item.link) ? item.name : '功能暂未开放'}">
                     <i class="fas ${item.icon}"></i>
                     <h2>${item.name}</h2>
@@ -275,7 +293,7 @@
             try {
                 frame.src = url;
             } catch(e) {
-                console.error('框架加载失败:', e);
+                console.error('加载失败:', e);
                 loader.textContent = '内容加载失败';
             }
         }
