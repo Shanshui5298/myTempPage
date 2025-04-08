@@ -63,15 +63,49 @@
         /* 全屏按钮样式 */
         .fullscreen-btn {
             position: absolute;
-            top: 50px;
-            right: 50px;
-            background: #1a237e;
+            top: 5px;
+            right:5px;
+            background: #0e9753;
             color: white;
             border: none;
-            padding: 8px 15px;
+            padding: 6px 38px;
             border-radius: 5px;
             cursor: pointer;
             z-index: 1000;
+        }
+
+        /* 飞字公告栏样式 */
+        .announcement-bar {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            width: 500px;
+            height: 30px;
+            background: linear-gradient(90deg, #5b66e4, #0e9753);
+            border: none;
+            z-index: 999;
+            overflow: hidden;
+            border-radius: 5px;
+            color: white;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .announcement-content {
+            position: absolute;
+            white-space: nowrap;
+            animation: scrollText 20s linear infinite;
+            padding-left: 100%;
+        }
+
+        @keyframes scrollText {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
         }
 
         .card.invalid {
@@ -140,6 +174,10 @@
             .content-container {
                 height: 55vh;
             }
+            .announcement-bar {
+                width: 300px;
+                font-size: 12px;
+            }
         }
     </style>
 </head>
@@ -153,6 +191,11 @@
 
         <div class="content-container">
             <button class="fullscreen-btn" onclick="toggleFullscreen()">全屏显示</button>
+            <div class="announcement-bar">
+                <div class="announcement-content">
+                    如有任何需求，请随时联系管理员。联系电话：18633705298
+                </div>
+            </div>
             <div class="loading-mask">加载中...</div>
             <iframe 
                 id="contentFrame" 
@@ -166,7 +209,7 @@
         const linkConfig = [
             { name: "产权调换数据看板", icon: "fa-chart-line", link: "https://www.kdocs.cn/wo/sl/v1fHtSr" },
             { name: "社情民意信息", icon: "fa-users", link: "https://www.kdocs.cn/wo/sl/v12yUnYd" },
-            { name: "各组户情数据", icon: "fa-pen-to-square", link: "https://www.kdocs.cn/wo/sl/v130QwFh" },
+            { name: "各组户情数据", icon: "fa-pen-to-square", link: "https://www.kdocs.cn/wo/sl/v1eXV63" },
             { name: "各组居民意向", icon: "fa-tasks", link: "https://www.kdocs.cn/wo/sl/v13Z26lY" },
             { name: "需货币补偿原因", icon: "fa-map", link: "https://www.kdocs.cn/wo/sl/v14RVl11" },
             { name: "居民分组名单", icon: "fa-user-tie", link: "https://www.kdocs.cn/wo/sl/v12tJBZA" },
